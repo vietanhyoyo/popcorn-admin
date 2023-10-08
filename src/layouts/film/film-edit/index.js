@@ -49,14 +49,14 @@ function FilmEdit() {
         setFilmData(res.data);
         const resApi = await theMovieDBServer.getThemovieDB(
           res.data.themoviedb_id,
-          res.data.type === 1 ? "movie" : "tv"
+          res.data.type === 2 ? "movie" : "tv"
         );
         if (resApi.status == 200) {
           setThemoviedb(resApi.data);
-          // console.log(resApi.data);
+        } else {
+          setThemoviedb(undefined);
         }
       }
-      // console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -64,6 +64,15 @@ function FilmEdit() {
 
   const onShowSoundDialog = () => {
     setIsOpenDialog(true);
+  };
+
+  const updateFilm = async (filmData) => {
+    try {
+      await filmService.updateFilm(filmData._id, filmData);
+      getAPI(route[route.length - 1]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -120,8 +129,8 @@ function FilmEdit() {
                         }));
                       }}
                     >
-                      <MenuItem value={1}>Movie</MenuItem>
-                      <MenuItem value={2}>TV Show</MenuItem>
+                      <MenuItem value={1}>TV Show</MenuItem>
+                      <MenuItem value={2}>Movie</MenuItem>
                     </Select>
                     <SoftTypography
                       marginLeft={1}
@@ -201,6 +210,14 @@ function FilmEdit() {
                   }}
                 >
                   Sound Track
+                </SoftButton>
+                <SoftButton
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => {
+                    updateFilm(filmData);
+                  }}
+                >
+                  Save
                 </SoftButton>
               </SoftBox>
             ) : (

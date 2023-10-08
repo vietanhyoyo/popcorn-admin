@@ -56,6 +56,7 @@ import CustomerSupport from "examples/Icons/CustomerSupport";
 import CreditCard from "examples/Icons/CreditCard";
 import Cube from "examples/Icons/Cube";
 import FilmEdit from "layouts/film/film-edit";
+import FilmAdd from "layouts/film/film-add";
 
 const routes = [
   {
@@ -145,6 +146,13 @@ const routes = [
     key: "film-edit",
     route: "/film/:id",
     component: <FilmEdit />,
+    noCollapse: true,
+  },
+  {
+    name: "Film add",
+    key: "film-add",
+    route: "/film/add",
+    component: <FilmAdd />,
     noCollapse: true,
   },
 ];

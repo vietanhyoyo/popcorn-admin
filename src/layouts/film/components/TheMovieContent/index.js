@@ -50,7 +50,6 @@ function TheMovieContent({ themoviedb }) {
           alt={"backdrop_path"}
         />
         <Divider />
-        <SoftTypography variant="caption">{JSON.stringify(themoviedb, null, 2)}</SoftTypography>
       </SoftBox>
     </SoftBox>
   );

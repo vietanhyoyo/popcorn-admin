@@ -27,9 +27,12 @@ import team4 from "assets/images/team-4.jpg";
 // Service API
 import FilmService from "services/examples/film.service";
 import Footer from "examples/Footer";
+import SoftInput from "components/SoftInput";
+import SoftButton from "components/SoftButton";
 
 function Film() {
   const filmService = new FilmService();
+  const [keySearch, setKeySearch] = React.useState("");
   const [pageIndex, setPageIndex] = React.useState(1);
   const [data, setData] = React.useState();
   const [filmList, setFilmList] = React.useState([]);
@@ -38,9 +41,9 @@ function Film() {
     getList(pageIndex);
   }, [pageIndex]);
 
-  const getList = async (page) => {
+  const getList = async (page, nameSearch) => {
     try {
-      const res = await filmService.getList(page);
+      const res = await filmService.getList(page, nameSearch);
       if (res.status === 200) {
         setData(res.data);
         setFilmList(res.data.data);
@@ -55,6 +58,11 @@ function Film() {
     setPageIndex(page);
   };
 
+  const onSearchClick = () => {
+    setPageIndex(1);
+    getList(1, keySearch);
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -66,10 +74,14 @@ function Film() {
                 FILM LIST
               </SoftTypography>
             </SoftBox>
-            <SoftBox mb={1}>
-              <SoftTypography variant="button" fontWeight="regular" color="text">
-                Film management
-              </SoftTypography>
+            <SoftBox mb={1} display="flex" alignItems="center" onClick={onSearchClick}>
+              <SoftButton mr={1}>Search</SoftButton>
+              <SoftInput
+                value={keySearch}
+                onChange={(event) => {
+                  setKeySearch(event.target.value);
+                }}
+              ></SoftInput>
             </SoftBox>
           </SoftBox>
           <SoftBox p={2}>
@@ -80,9 +92,9 @@ function Film() {
                     <Link to={`/film/${item._id}`}>
                       <FilmCard
                         image={item.thumbnail}
-                        label={item.type === 1 ? "movie" : "tv show"}
+                        label={item.type === 2 ? "movie" : "tv show"}
                         title={item.name}
-                        description="As Uber works through a huge amount of internal management turmoil."
+                        description={item.soundtrack_count ?? "No Sound"}
                         action={{
                           type: "internal",
                           route: "/film",
