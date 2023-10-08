@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import PropTypes from "prop-types";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import SoftButton from "components/SoftButton";
 
 function CusInput({ label, value, onChange, ...restProps }) {
@@ -21,21 +21,17 @@ function CusInput({ label, value, onChange, ...restProps }) {
       <SoftTypography marginRight={1} component="label" variant="caption" fontWeight="bold">
         {label}:
       </SoftTypography>
-      {isEditing ? (
-        <SoftInput
-          label="Name"
-          value={value}
-          onChange={(event) => {
-            onChange(event);
-          }}
-          {...restProps}
-        />
-      ) : (
-        <SoftTypography marginRight={1} component="label" variant="caption">
-        {value}
-      </SoftTypography>
-      )}
-       <IconButton variant="contained" onClick={handleToggleEditing} size="small">
+      <SoftInput
+        label="Name"
+        value={value}
+        disabled={!isEditing}
+        onChange={(event) => {
+          if (!isEditing) return;
+          onChange(event);
+        }}
+        {...restProps} 
+      />
+      <IconButton variant="contained" onClick={handleToggleEditing} size="small">
         {isEditing ? <CheckCircleOutlineIcon color="primary" /> : <EditIcon />}
       </IconButton>
     </SoftBox>

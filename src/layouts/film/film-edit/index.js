@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { Divider, InputLabel, MenuItem, Select } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 
 // Soft UI Dashboard React components
@@ -16,6 +17,9 @@ import SoftBox from "components/SoftBox";
 import SoftInput from "components/SoftInput";
 import SoftTypography from "components/SoftTypography";
 import CusInput from "components/CusInput";
+import SoftButton from "components/SoftButton";
+import TheMovieContent from "layouts/film/components/TheMovieContent";
+import SoundDialog from "layouts/film//components/SoundDialog";
 
 // Soft UI Dashboard React examples
 import Footer from "examples/Footer";
@@ -25,13 +29,13 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 // Service API
 import FilmService from "services/examples/film.service";
 import TheMovieDBServer from "services/examples/themoviedb.service";
-import { Divider, InputLabel, MenuItem, Select } from "@mui/material";
 
 function FilmEdit() {
   const filmService = new FilmService();
   const theMovieDBServer = new TheMovieDBServer();
   const [filmData, setFilmData] = React.useState();
   const [themoviedb, setThemoviedb] = React.useState();
+  const [isOpenDialog, setIsOpenDialog] = React.useState(false);
   const route = useLocation().pathname.split("/").slice(1);
 
   React.useEffect(() => {
@@ -49,13 +53,17 @@ function FilmEdit() {
         );
         if (resApi.status == 200) {
           setThemoviedb(resApi.data);
-          console.log(resApi.data);
+          // console.log(resApi.data);
         }
       }
-      console.log(res.data);
+      // console.log(res.data);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onShowSoundDialog = () => {
+    setIsOpenDialog(true);
   };
 
   return (
@@ -63,18 +71,6 @@ function FilmEdit() {
       <DashboardNavbar />
       <SoftBox mb={3}>
         <Card>
-          <SoftBox pt={2} px={2}>
-            <SoftBox mb={0.5}>
-              <SoftTypography variant="h6" fontWeight="medium">
-                FILM EDITOR
-              </SoftTypography>
-            </SoftBox>
-            <SoftBox mb={1}>
-              <SoftTypography variant="button" fontWeight="regular" color="text">
-                Film management
-              </SoftTypography>
-            </SoftBox>
-          </SoftBox>
           <SoftBox p={2}>
             {filmData != undefined ? (
               <SoftBox>
@@ -151,7 +147,7 @@ function FilmEdit() {
                     }}
                   />
                   <img
-                    style={{ maxWidth: "200px" }}
+                    style={{ maxWidth: "200px", marginBottom: "8px" }}
                     src={filmData.thumbnail}
                     alt={"thumbnail"}
                   ></img>
@@ -159,7 +155,7 @@ function FilmEdit() {
                 <SoftBox>
                   <CusInput
                     multiline
-                    label="Thumbnail"
+                    label="Backdrop"
                     value={filmData.backdrop}
                     onChange={(event) => {
                       const { value } = event.target;
@@ -172,7 +168,7 @@ function FilmEdit() {
                   <img
                     style={{ maxHeight: "200px" }}
                     src={filmData.backdrop}
-                    alt={"thumbnail"}
+                    alt={"backdrop"}
                   ></img>
                 </SoftBox>
                 <CusInput
@@ -199,16 +195,20 @@ function FilmEdit() {
                     }));
                   }}
                 />
+                <SoftButton
+                  onClick={() => {
+                    onShowSoundDialog();
+                  }}
+                >
+                  Sound Track
+                </SoftButton>
               </SoftBox>
             ) : (
               <SoftBox></SoftBox>
             )}
+            <Divider />
             {themoviedb != undefined ? (
-              <SoftBox>
-                <Typography variant="h4" color="secondary">
-                  The Movie DB
-                </Typography>
-              </SoftBox>
+              <TheMovieContent themoviedb={themoviedb} />
             ) : (
               <SoftBox></SoftBox>
             )}
@@ -216,6 +216,15 @@ function FilmEdit() {
         </Card>
       </SoftBox>
       <Footer />
+      {filmData != undefined && (
+        <SoundDialog
+          film={filmData}
+          isOpen={isOpenDialog}
+          onChange={(value) => {
+            setIsOpenDialog(value);
+          }}
+        />
+      )}
     </DashboardLayout>
   );
 }

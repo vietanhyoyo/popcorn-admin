@@ -10,6 +10,11 @@ class FilmService extends BaseService {
     const result = await this.api.get("/films/id?id=" + _id);
     return result;
   };
+
+  getSoundTrack = async (film, episodeSlug) => {
+    const result = await this.api.get(`/soundtrack?film=${film}` );
+    return result;
+  }
 }
 
 export default FilmService;

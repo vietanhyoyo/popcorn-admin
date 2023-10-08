@@ -80,7 +80,7 @@ function Film() {
                     <Link to={`/film/${item._id}`}>
                       <FilmCard
                         image={item.thumbnail}
-                        label="project #2"
+                        label={item.type === 1 ? "movie" : "tv show"}
                         title={item.name}
                         description="As Uber works through a huge amount of internal management turmoil."
                         action={{
