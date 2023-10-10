@@ -172,7 +172,7 @@ export default function SoundDialog({ film, isOpen, onChange }) {
                       >
                         <SoftBox>
                           <SoftTypography variant="caption">
-                            -{index}-{ele.name}
+                            -{index}--{ele.name}
                           </SoftTypography>
                         </SoftBox>
                       </SoftButton>

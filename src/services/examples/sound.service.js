@@ -5,6 +5,11 @@ class SoundService extends BaseService {
     const result = await this.api.post("/soundtrack/update/" + id, body);
     return result;
   };
+
+  addSound = async (body) => {
+    const result = await this.api.post("/soundtrack/add", body);
+    return result;
+  };
 }
 
 export default SoundService;

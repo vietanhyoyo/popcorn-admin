@@ -73,6 +73,11 @@ function Film() {
               <SoftTypography variant="h6" fontWeight="medium">
                 FILM LIST
               </SoftTypography>
+              <Link to={`/film/add`}>
+                <SoftButton>
+                  Add Film
+                </SoftButton>
+              </Link>
             </SoftBox>
             <SoftBox mb={1} display="flex" alignItems="center" onClick={onSearchClick}>
               <SoftButton mr={1}>Search</SoftButton>

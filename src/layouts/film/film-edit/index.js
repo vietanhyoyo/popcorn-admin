@@ -29,6 +29,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 // Service API
 import FilmService from "services/examples/film.service";
 import TheMovieDBServer from "services/examples/themoviedb.service";
+import AddSoundDialog from "../components/AddSoundDialog";
 
 function FilmEdit() {
   const filmService = new FilmService();
@@ -36,6 +37,7 @@ function FilmEdit() {
   const [filmData, setFilmData] = React.useState();
   const [themoviedb, setThemoviedb] = React.useState();
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
+  const [isOpenAddDialog, setIsOpenAddDialog] = React.useState(false);
   const route = useLocation().pathname.split("/").slice(1);
 
   React.useEffect(() => {
@@ -219,6 +221,14 @@ function FilmEdit() {
                 >
                   Save
                 </SoftButton>
+                <SoftButton
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => {
+                    setIsOpenAddDialog(true);
+                  }}
+                >
+                  Add Sound Track
+                </SoftButton>
               </SoftBox>
             ) : (
               <SoftBox></SoftBox>
@@ -239,6 +249,15 @@ function FilmEdit() {
           isOpen={isOpenDialog}
           onChange={(value) => {
             setIsOpenDialog(value);
+          }}
+        />
+      )}
+      {filmData != undefined && (
+        <AddSoundDialog
+          filmProp={filmData}
+          isOpen={isOpenAddDialog}
+          onChange={(value) => {
+            setIsOpenAddDialog(value);
           }}
         />
       )}

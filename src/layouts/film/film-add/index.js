@@ -63,8 +63,10 @@ function FilmEdit() {
   async function addNewFilm(body) {
     try {
       await filmService.addFilm(body);
+      alert("Successful");
       console.log("Successful");
     } catch (error) {
+      alert(error);
       console.log(error);
     }
   }
@@ -212,15 +214,14 @@ function FilmEdit() {
                 }
               }}
             />
-            <SoftBox
-              width="100%"
-              style={{ display: "flex", justifyContent: "flex-end" }}
-              pr={1}
-              onClick={() => {
-                addNewFilm(film);
-              }}
-            >
-              <SoftButton>Add</SoftButton>
+            <SoftBox width="100%" style={{ display: "flex", justifyContent: "flex-end" }}>
+              <SoftButton
+                onClick={() => {
+                  addNewFilm(film);
+                }}
+              >
+                Add
+              </SoftButton>
             </SoftBox>
           </SoftBox>
           <SoftBox p={2}>
