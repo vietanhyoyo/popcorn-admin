@@ -12,10 +12,12 @@ import SoftBox from "components/SoftBox";
 import CusInput from "components/CusInput";
 import CusTextField from "components/CusTextField";
 import SoftButton from "components/SoftButton";
+import FilmService from "services/examples/film.service";
 import SoundService from "services/examples/sound.service";
 
 export default function AddSoundDialog({ filmProp, isOpen, onChange }) {
   const soundService = new SoundService();
+  const filmService = new FilmService();
   const [open, setOpen] = React.useState(false);
   const [soundData, setSoundData] = React.useState({
     id: null,

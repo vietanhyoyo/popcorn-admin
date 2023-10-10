@@ -14,6 +14,8 @@ import SoftBox from "components/SoftBox";
 import SoftButton from "components/SoftButton";
 import CusInput from "components/CusInput";
 import { MenuItem, Select } from "@mui/material";
+import AddSoundDialog from "../AddSoundDialog";
+import SeasonDialog from "../SeasonDialog";
 
 export default function SoundDialog({ film, isOpen, onChange }) {
   // Define service
@@ -21,12 +23,14 @@ export default function SoundDialog({ film, isOpen, onChange }) {
   const soundService = new SoundService();
   // Define state
   const [open, setOpen] = React.useState(false);
+  const [isOpenSeasonDialog, setIsOpenSeasonDialog] = React.useState(false);
+  const [isOpenAddDialog, setIsOpenAddDialog] = React.useState(false);
   const [sounds, setSounds] = React.useState([]);
   const [selectSound, setSelectSound] = React.useState();
   const [seasons, setSeasons] = React.useState([]);
-  const [selectSeason, setSelectSeason] = React.useState(0);
+  const [selectSeason, setSelectSeason] = React.useState(-1);
   const [episodes, setEpisodes] = React.useState([]);
-  const [selectEpisode, setSelectEpisode] = React.useState(0);
+  const [selectEpisode, setSelectEpisode] = React.useState(-1);
 
   const handleClose = () => {
     setOpen(false);
@@ -114,7 +118,31 @@ export default function SoundDialog({ film, isOpen, onChange }) {
         <DialogContent>
           <SoftBox display="flex">
             <SoftBox>
+              {film.type != 1 && selectEpisode != -1 && (
+                <SoftBox>
+                  <SoftButton
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => {
+                      setIsOpenAddDialog(true);
+                    }}
+                  >
+                    Add Sound Track
+                  </SoftButton>
+                </SoftBox>
+              )}
               <SoftBox>
+                {film.type == 1 && (
+                  <SoftBox>
+                    <SoftButton
+                      style={{ marginLeft: "10px" }}
+                      onClick={() => {
+                        setIsOpenSeasonDialog(true);
+                      }}
+                    >
+                      Add Season
+                    </SoftButton>
+                  </SoftBox>
+                )}
                 {seasons.length != 0 && (
                   <Select
                     value={selectSeason}
@@ -319,6 +347,25 @@ export default function SoundDialog({ film, isOpen, onChange }) {
           <Button onClick={handleClose}>Close</Button>
         </DialogActions>
       </Dialog>
+      {film != undefined && (
+        <AddSoundDialog
+          filmProp={film}
+          isOpen={isOpenAddDialog}
+          onChange={(value) => {
+            setIsOpenAddDialog(value);
+          }}
+        />
+      )}
+      {film != undefined && (
+        <SeasonDialog
+          filmProp={film}
+          seasonList={seasons}
+          isOpen={isOpenSeasonDialog}
+          onChange={(value) => {
+            setIsOpenSeasonDialog(value);
+          }}
+        />
+      )}
     </div>
   );
 }
