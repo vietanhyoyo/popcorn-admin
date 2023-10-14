@@ -18,7 +18,7 @@ import AddSoundDialog from "../AddSoundDialog";
 import SeasonDialog from "../SeasonDialog";
 import EpisodeDialog from "../EpisodeDialog";
 
-export default function SoundDialog({ film, isOpen, onChange }) {
+export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
   // Define service
   const filmService = new FilmService();
   const soundService = new SoundService();
@@ -116,7 +116,8 @@ export default function SoundDialog({ film, isOpen, onChange }) {
   const updateSoundTrack = async (soundData) => {
     try {
       const res = await soundService.updateSound(soundData._id, soundData);
-      console.log(res);
+      alert("Update Successful");
+      reLoad();
       getSoundAPI();
     } catch (error) {
       console.log(error);
@@ -380,6 +381,7 @@ export default function SoundDialog({ film, isOpen, onChange }) {
       {film != undefined && (
         <AddSoundDialog
           filmProp={film}
+          episode_id={selectEpisode != -1 ? episodes[selectEpisode].id : null}
           isOpen={isOpenAddDialog}
           onChange={(value) => {
             setIsOpenAddDialog(value);
@@ -396,14 +398,17 @@ export default function SoundDialog({ film, isOpen, onChange }) {
           }}
         />
       )}
-      {film != undefined && (
+      {film != undefined && selectSeason != -1 ? (
         <EpisodeDialog
           filmProp={film}
+          season={seasons[selectSeason]}
           isOpen={isEpisodeDialog}
           onChange={(value) => {
             setIsEpisodeDialog(value);
           }}
         />
+      ) : (
+        <div></div>
       )}
     </div>
   );
@@ -412,5 +417,6 @@ export default function SoundDialog({ film, isOpen, onChange }) {
 SoundDialog.propTypes = {
   film: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  reLoad: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 };

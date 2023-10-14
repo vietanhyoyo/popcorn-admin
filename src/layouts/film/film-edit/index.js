@@ -236,6 +236,7 @@ function FilmEdit() {
       <Footer />
       {filmData != undefined && (
         <SoundDialog
+          reLoad={() => getAPI(route[route.length - 1])}
           film={filmData}
           isOpen={isOpenDialog}
           onChange={(value) => {

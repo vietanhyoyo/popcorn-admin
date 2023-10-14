@@ -15,24 +15,71 @@ import SoftButton from "components/SoftButton";
 import FilmService from "services/examples/film.service";
 import SoundService from "services/examples/sound.service";
 import SeasonService from "services/examples/season.service";
+import EpisodeService from "services/examples/episode.service";
 
-export default function EpisodeDialog({ filmProp, isOpen, onChange }) {
-  
+export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
+  const newData = {
+    _id: null,
+    id: null,
+    name: null,
+    slug: null,
+    description: null,
+    release_date: null,
+    season_id: season.id,
+    code: null,
+  };
+  const episodeService = new EpisodeService();
   const soundService = new SoundService();
   const filmService = new FilmService();
   const seasonService = new SeasonService();
   const [open, setOpen] = React.useState(false);
+  const [episodes, setEpisodes] = React.useState([]);
   const [selectSeason, setSelectSeason] = React.useState(-1);
+  const [episode, setEpisode] = React.useState(newData);
 
   React.useEffect(() => {
     setOpen(isOpen);
   }, [isOpen]);
+
+  React.useEffect(() => {
+    getEpisodeList(filmProp, season);
+  }, []);
 
   const handleClose = () => {
     setOpen(false);
     onChange(false);
     isOpen = false;
   };
+
+  // Gọi Api lấy danh sách episode
+  const getEpisodeList = async (film, season) => {
+    try {
+      const res = await filmService.getEpisodes(film.slug, season.slug);
+      console.log(res);
+      setEpisodes(res.data);
+      return res.data;
+    } catch (error) {
+      setEpisodes([]);
+      console.log("error");
+      console.log(error);
+      return [];
+    }
+  };
+
+  async function saveEpisode(body) {
+    try {
+      if (episode._id === null) {
+        await episodeService.addEpisode(body);
+        alert("Add Successful");
+      } else {
+        await episodeService.updateEpisode(body._id, body);
+        alert("Successful");
+      }
+    } catch (error) {
+      alert(error);
+      console.log(error);
+    }
+  }
 
   function convertToSlug(text) {
     return text
@@ -48,7 +95,109 @@ export default function EpisodeDialog({ filmProp, isOpen, onChange }) {
       <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="1200px">
         <DialogTitle>Episode</DialogTitle>
         <DialogContent>
-          <SoftBox display="flex">Episode</SoftBox>
+          <SoftBox display="flex">
+            <SoftBox>
+              {episodes.length != 0 &&
+                episodes.map((ele, index) => {
+                  return (
+                    <SoftBox key={index} width="200px">
+                      <SoftButton
+                        onClick={() => {
+                          setEpisode(ele);
+                        }}
+                        fullWidth={true}
+                      >
+                        <SoftBox>
+                          <SoftTypography variant="caption">
+                            -{index}--{ele.name}
+                          </SoftTypography>
+                        </SoftBox>
+                      </SoftButton>
+                    </SoftBox>
+                  );
+                })}
+              <SoftBox width="200px">
+                <SoftButton
+                  onClick={() => {
+                    setEpisode(newData);
+                  }}
+                  fullWidth={true}
+                >
+                  <SoftBox>
+                    <SoftTypography variant="caption">add new episode</SoftTypography>
+                  </SoftBox>
+                </SoftButton>
+              </SoftBox>
+            </SoftBox>
+            <SoftBox ml={3}>
+              <CusTextField
+                disabled={true}
+                label="season_id"
+                value={episode.season_id ?? ""}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setEpisode((prev) => ({
+                    ...prev,
+                    season_id: value,
+                  }));
+                }}
+              />
+              <CusTextField
+                label="name"
+                value={episode.name ?? ""}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setEpisode((prev) => ({
+                    ...prev,
+                    name: value,
+                    slug: convertToSlug(value),
+                  }));
+                }}
+              />
+              <CusTextField
+                label="slug"
+                value={episode.slug ?? ""}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setEpisode((prev) => ({
+                    ...prev,
+                    slug: value,
+                  }));
+                }}
+              />
+              <CusTextField
+                multiline
+                label="description"
+                value={episode.description ?? ""}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setEpisode((prev) => ({
+                    ...prev,
+                    description: value,
+                  }));
+                }}
+              />
+              <CusTextField
+                label="release_date"
+                type="date"
+                value={new Date(episode.release_date).toISOString().split("T")[0]}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setEpisode((prev) => ({
+                    ...prev,
+                    release_date: value,
+                  }));
+                }}
+              />
+              <SoftButton
+                onClick={() => {
+                  saveEpisode(episode);
+                }}
+              >
+                Save
+              </SoftButton>
+            </SoftBox>
+          </SoftBox>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
@@ -61,6 +210,7 @@ export default function EpisodeDialog({ filmProp, isOpen, onChange }) {
 
 EpisodeDialog.propTypes = {
   filmProp: PropTypes.object.isRequired,
+  season: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
 };

@@ -15,7 +15,7 @@ import SoftButton from "components/SoftButton";
 import FilmService from "services/examples/film.service";
 import SoundService from "services/examples/sound.service";
 
-export default function AddSoundDialog({ filmProp, isOpen, onChange }) {
+export default function AddSoundDialog({ filmProp, episode_id, isOpen, onChange }) {
   const soundService = new SoundService();
   const filmService = new FilmService();
   const [open, setOpen] = React.useState(false);
@@ -23,7 +23,7 @@ export default function AddSoundDialog({ filmProp, isOpen, onChange }) {
     id: null,
     name: null,
     slug: null,
-    episode_id: null,
+    episode_id: episode_id,
     description: null,
     artist: null,
     itune_link: null,
@@ -101,6 +101,7 @@ export default function AddSoundDialog({ filmProp, isOpen, onChange }) {
               </SoftBox>
               <SoftBox width="500px">
                 <CusTextField
+                disabled
                   label="episode_id"
                   value={soundData.episode_id ?? ""}
                   onChange={(event) => {
@@ -240,6 +241,7 @@ export default function AddSoundDialog({ filmProp, isOpen, onChange }) {
 
 AddSoundDialog.propTypes = {
   filmProp: PropTypes.object.isRequired,
+  episode_id: PropTypes.number,
   isOpen: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
 };
