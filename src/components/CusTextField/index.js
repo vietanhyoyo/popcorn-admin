@@ -29,7 +29,7 @@ function CusTextField({ label, value, onChange, ...restProps }) {
 
 CusTextField.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onChange: PropTypes.func.isRequired,
 };
 

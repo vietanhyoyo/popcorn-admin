@@ -10,6 +10,11 @@ class EpisodeService extends BaseService {
     const result = await this.api.post("/episode/add", body);
     return result;
   };
+
+  deleteEpisode = async (id) => {
+    const result = await this.api.post("/episode/delete/" + id);
+    return result;
+  };
 }
 
 export default EpisodeService;

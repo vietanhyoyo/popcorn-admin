@@ -38,7 +38,7 @@ function CusInput({ label, value, onChange, ...restProps }) {
 
 CusInput.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onChange: PropTypes.func.isRequired,
 };
 

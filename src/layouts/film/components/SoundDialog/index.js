@@ -113,9 +113,25 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
     }
   };
 
+  const deleteSoundTrack = async (body) => {
+    if (body._id === null) return;
+    const result = confirm("Delelte Sound Track");
+    if (result) {
+      try {
+        await soundService.deleteSound(body._id);
+        alert("Delete Successful");
+        setSounds([]);
+        getSoundAPI();
+        reLoad();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   const updateSoundTrack = async (soundData) => {
     try {
-      const res = await soundService.updateSound(soundData._id, soundData);
+      await soundService.updateSound(soundData._id, soundData);
       alert("Update Successful");
       reLoad();
       getSoundAPI();
@@ -133,39 +149,40 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
             <SoftBox>
               <SoftBox>
                 {film.type == 1 && (
-                  <SoftBox>
+                  <SoftBox mb={1}>
                     <SoftButton
-                      style={{ marginLeft: "10px" }}
                       onClick={() => {
                         setIsOpenSeasonDialog(true);
                       }}
+                      fullWidth
                     >
                       Add Season
                     </SoftButton>
                   </SoftBox>
                 )}
                 {seasons.length != 0 && (
-                  <Select
-                    value={selectSeason}
-                    onChange={(event) => {
-                      setSelectSeason(event.target.value);
-                      changeSeason(film, seasons[event.target.value]);
-                    }}
-                  >
-                    {seasons.map((ele, index) => {
-                      return (
-                        <MenuItem key={index} value={index}>
-                          {ele.name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
+                  <SoftBox mb={1}>
+                    <Select
+                      value={selectSeason}
+                      onChange={(event) => {
+                        setSelectSeason(event.target.value);
+                        changeSeason(film, seasons[event.target.value]);
+                      }}
+                    >
+                      {seasons.map((ele, index) => {
+                        return (
+                          <MenuItem key={index} value={index}>
+                            {ele.name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </SoftBox>
                 )}
-                {seasons != -1 ? (
-                  <SoftBox width="200px">
+                {selectSeason != -1 ? (
+                  <SoftBox width="200px" mb={1}>
                     <SoftButton
                       fullWidth={true}
-                      style={{ marginLeft: "10px" }}
                       onClick={() => {
                         setIsEpisodeDialog(true);
                       }}
@@ -177,37 +194,39 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
                   <></>
                 )}
                 {episodes.length != 0 && (
-                  <Select
-                    value={selectEpisode}
-                    onChange={async (event) => {
-                      setSelectEpisode(event.target.value);
-                      try {
-                        // Get api soundtrack
-                        const res = await filmService.getSoundTrack(
-                          film.slug,
-                          episodes[event.target.value].slug
+                  <SoftBox mb={1}>
+                    <Select
+                      value={selectEpisode}
+                      onChange={async (event) => {
+                        setSelectEpisode(event.target.value);
+                        try {
+                          // Get api soundtrack
+                          const res = await filmService.getSoundTrack(
+                            film.slug,
+                            episodes[event.target.value].slug
+                          );
+                          if (res.data != []) setSounds(res.data);
+                          else setSounds([]);
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
+                    >
+                      {episodes.map((ele, index) => {
+                        return (
+                          <MenuItem key={index} value={index}>
+                            {ele.name}
+                          </MenuItem>
                         );
-                        if (res.data != []) setSounds(res.data);
-                        else setSounds([]);
-                      } catch (error) {
-                        console.log(error);
-                      }
-                    }}
-                  >
-                    {episodes.map((ele, index) => {
-                      return (
-                        <MenuItem key={index} value={index}>
-                          {ele.name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
+                      })}
+                    </Select>
+                  </SoftBox>
                 )}
               </SoftBox>
               {sounds.length != 0 &&
                 sounds.map((ele, index) => {
                   return (
-                    <SoftBox key={index} width="200px">
+                    <SoftBox key={index} width="200px" mb={1}>
                       <SoftButton
                         onClick={() => {
                           setSelectSound(ele);
@@ -227,7 +246,6 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
                 <SoftBox width="200px">
                   <SoftButton
                     fullWidth={true}
-                    style={{ marginLeft: "10px" }}
                     onClick={() => {
                       setIsOpenAddDialog(true);
                     }}
@@ -365,8 +383,18 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
                     onClick={async () => {
                       await updateSoundTrack(selectSound);
                     }}
+                    style={{ marginRight: "10px" }}
                   >
                     Save
+                  </SoftButton>
+                  <SoftButton
+                    variant="outlined"
+                    color="error"
+                    onClick={async () => {
+                      await deleteSoundTrack(selectSound);
+                    }}
+                  >
+                    Delete
                   </SoftButton>
                 </SoftBox>
               )}
@@ -383,6 +411,10 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
           filmProp={film}
           episode_id={selectEpisode != -1 ? episodes[selectEpisode].id : null}
           isOpen={isOpenAddDialog}
+          reLoad={() => {
+            getSoundAPI();
+            reLoad();
+          }}
           onChange={(value) => {
             setIsOpenAddDialog(value);
           }}
@@ -392,6 +424,10 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
         <SeasonDialog
           filmProp={film}
           seasonList={seasons}
+          reLoad={() => {
+            getSoundAPI();
+            reLoad();
+          }}
           isOpen={isOpenSeasonDialog}
           onChange={(value) => {
             setIsOpenSeasonDialog(value);
@@ -403,6 +439,10 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
           filmProp={film}
           season={seasons[selectSeason]}
           isOpen={isEpisodeDialog}
+          reLoad={() => {
+            getSoundAPI();
+            reLoad();
+          }}
           onChange={(value) => {
             setIsEpisodeDialog(value);
           }}

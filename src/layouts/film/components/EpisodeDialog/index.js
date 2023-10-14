@@ -17,7 +17,7 @@ import SoundService from "services/examples/sound.service";
 import SeasonService from "services/examples/season.service";
 import EpisodeService from "services/examples/episode.service";
 
-export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
+export default function EpisodeDialog({ filmProp, reLoad, season, isOpen, onChange }) {
   const newData = {
     _id: null,
     id: null,
@@ -39,11 +39,15 @@ export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
 
   React.useEffect(() => {
     setOpen(isOpen);
-  }, [isOpen]);
-
-  React.useEffect(() => {
+  
+    if (season != null) {
+      setEpisode((prev) => ({
+        ...prev,
+        season_id: season.id,
+      }));
+    }
     getEpisodeList(filmProp, season);
-  }, []);
+  }, [isOpen]);
 
   const handleClose = () => {
     setOpen(false);
@@ -70,6 +74,8 @@ export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
     try {
       if (episode._id === null) {
         await episodeService.addEpisode(body);
+        getEpisodeList(filmProp, season);
+        reLoad();
         alert("Add Successful");
       } else {
         await episodeService.updateEpisode(body._id, body);
@@ -80,6 +86,21 @@ export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
       console.log(error);
     }
   }
+
+  const deleteEpisode = async (body) => {
+    if (body._id === null) return;
+    const result = confirm("Delelte Episode");
+    if (result) {
+      try {
+        await episodeService.deleteEpisode(body._id);
+        alert("Delete Successful");
+        getEpisodeList(filmProp, season);
+        reLoad();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   function convertToSlug(text) {
     return text
@@ -100,7 +121,7 @@ export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
               {episodes.length != 0 &&
                 episodes.map((ele, index) => {
                   return (
-                    <SoftBox key={index} width="200px">
+                    <SoftBox key={index} width="200px" mb={1}>
                       <SoftButton
                         onClick={() => {
                           setEpisode(ele);
@@ -190,11 +211,21 @@ export default function EpisodeDialog({ filmProp, season, isOpen, onChange }) {
                 }}
               />
               <SoftButton
+                style={{ marginRight: "10px" }}
                 onClick={() => {
                   saveEpisode(episode);
                 }}
               >
                 Save
+              </SoftButton>
+              <SoftButton
+                variant="outlined"
+                color="error"
+                onClick={async () => {
+                  await deleteEpisode(episode);
+                }}
+              >
+                Delete
               </SoftButton>
             </SoftBox>
           </SoftBox>
@@ -212,5 +243,6 @@ EpisodeDialog.propTypes = {
   filmProp: PropTypes.object.isRequired,
   season: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  reLoad: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 };

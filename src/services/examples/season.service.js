@@ -10,6 +10,11 @@ class SeasonService extends BaseService {
     const result = await this.api.post("/season/add", body);
     return result;
   };
+
+  deleteSeason = async (id) => {
+    const result = await this.api.post("/season/delete/" + id);
+    return result;
+  };
 }
 
 export default SeasonService;

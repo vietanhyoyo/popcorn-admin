@@ -63,8 +63,7 @@ function FilmEdit() {
   async function addNewFilm(body) {
     try {
       await filmService.addFilm(body);
-      alert("Successful");
-      console.log("Successful");
+      alert("Add Successful");
     } catch (error) {
       alert(error);
       console.log(error);

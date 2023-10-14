@@ -16,7 +16,7 @@ import FilmService from "services/examples/film.service";
 import SoundService from "services/examples/sound.service";
 import SeasonService from "services/examples/season.service";
 
-export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange }) {
+export default function SeasonDialog({ filmProp, reLoad, seasonList, isOpen, onChange }) {
   const newSoundTrack = {
     _id: null,
     id: null,
@@ -46,6 +46,7 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
     try {
       if (season._id === null) {
         await seasonService.addSeason(body);
+        reLoad();
         alert("Add Successful");
       } else {
         await seasonService.updateSeason(body._id, body);
@@ -56,6 +57,20 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
       console.log(error);
     }
   }
+
+  const deleteSeason = async (body) => {
+    if (body._id === null) return;
+    const result = confirm("Delelte Season");
+    if (result) {
+      try {
+        await seasonService.deleteSeason(body._id);
+        alert("Delete Successful");
+        reLoad();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   function convertToSlug(text) {
     return text
@@ -76,11 +91,12 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
               {seasonList.length != 0 &&
                 seasonList.map((ele, index) => {
                   return (
-                    <SoftBox key={index} width="200px">
+                    <SoftBox key={index} width="200px" mb={1}>
                       <SoftButton
                         onClick={() => {
                           setSeason(ele);
                         }}
+                        fullWidth
                       >
                         <SoftBox>
                           <SoftTypography variant="caption">
@@ -96,6 +112,7 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
                   onClick={() => {
                     setSeason(newSoundTrack);
                   }}
+                  fullWidth
                 >
                   <SoftBox>
                     <SoftTypography variant="caption">Add season</SoftTypography>
@@ -103,7 +120,7 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
                 </SoftButton>
               </SoftBox>
             </SoftBox>
-            <SoftBox>
+            <SoftBox ml={3}>
               <CusTextField
                 label="name"
                 value={season.name ?? ""}
@@ -133,7 +150,6 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
                 value={season.film_id ?? ""}
                 onChange={(event) => {}}
               />
-              <SoftTypography>{season.release_date}</SoftTypography>
               <CusTextField
                 label="release_date"
                 type="date"
@@ -147,11 +163,21 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
                 }}
               />
               <SoftButton
+              style={{marginRight: "10px"}}
                 onClick={() => {
                   saveSeason(season);
                 }}
               >
                 Save
+              </SoftButton>
+              <SoftButton
+                variant="outlined"
+                color="error"
+                onClick={async () => {
+                  await deleteSeason(season);
+                }}
+              >
+                Delete
               </SoftButton>
             </SoftBox>
           </SoftBox>
@@ -169,5 +195,6 @@ SeasonDialog.propTypes = {
   filmProp: PropTypes.object.isRequired,
   seasonList: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  reLoad: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
 };

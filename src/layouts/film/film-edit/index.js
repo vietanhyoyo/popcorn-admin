@@ -30,7 +30,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import FilmService from "services/examples/film.service";
 import TheMovieDBServer from "services/examples/themoviedb.service";
 
-
 function FilmEdit() {
   const filmService = new FilmService();
   const theMovieDBServer = new TheMovieDBServer();
@@ -71,7 +70,9 @@ function FilmEdit() {
     try {
       await filmService.updateFilm(filmData._id, filmData);
       getAPI(route[route.length - 1]);
+      alert("Save Successful");
     } catch (error) {
+      alert(error);
       console.log(error);
     }
   };
@@ -203,6 +204,18 @@ function FilmEdit() {
                       ...prev,
                       themoviedb_id: value,
                     }));
+                  }}
+                  onBlur={async (event) => {
+                    const { value } = event.target;
+                    const resApi = await theMovieDBServer.getThemovieDB(
+                      value,
+                      filmData.type === 2 ? "movie" : "tv"
+                    );
+                    if (resApi.status == 200) {
+                      setThemoviedb(resApi.data);
+                    } else {
+                      setThemoviedb(undefined);
+                    }
                   }}
                 />
                 <SoftButton

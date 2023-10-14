@@ -29,11 +29,13 @@ import FilmService from "services/examples/film.service";
 import Footer from "examples/Footer";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
+import { Divider, MenuItem, Select } from "@mui/material";
 
 function Film() {
   const filmService = new FilmService();
   const [keySearch, setKeySearch] = React.useState("");
   const [pageIndex, setPageIndex] = React.useState(1);
+  const [type, setType] = React.useState(0);
   const [data, setData] = React.useState();
   const [filmList, setFilmList] = React.useState([]);
 
@@ -41,9 +43,9 @@ function Film() {
     getList(pageIndex);
   }, [pageIndex]);
 
-  const getList = async (page, nameSearch) => {
+  const getList = async (page, nameSearch, type) => {
     try {
-      const res = await filmService.getList(page, nameSearch);
+      const res = await filmService.getList(page, nameSearch, type);
       if (res.status === 200) {
         setData(res.data);
         setFilmList(res.data.data);
@@ -69,24 +71,48 @@ function Film() {
       <SoftBox mb={3}>
         <Card>
           <SoftBox pt={2} px={2}>
-            <SoftBox mb={0.5}>
-              <SoftTypography variant="h6" fontWeight="medium">
+            <SoftBox mb={0.5} display="flex" alignItems="center">
+              <SoftTypography variant="h6" fontWeight="medium" pr={3}>
                 FILM LIST
               </SoftTypography>
               <Link to={`/film/add`}>
-                <SoftButton>
-                  Add Film
-                </SoftButton>
+                <SoftButton>Add Film</SoftButton>
               </Link>
             </SoftBox>
-            <SoftBox mb={1} display="flex" alignItems="center" onClick={onSearchClick}>
-              <SoftButton mr={1}>Search</SoftButton>
-              <SoftInput
-                value={keySearch}
-                onChange={(event) => {
-                  setKeySearch(event.target.value);
-                }}
-              ></SoftInput>
+            <Divider />
+            <SoftBox mb={1} display="flex" alignItems="center">
+              <SoftButton mr={1} onClick={onSearchClick}>
+                Search
+              </SoftButton>
+              <SoftBox ml={1} flex="1">
+                <SoftInput
+                  value={keySearch}
+                  onChange={(event) => {
+                    setKeySearch(event.target.value);
+                  }}
+                  fullWidth
+                ></SoftInput>
+              </SoftBox>
+              <SoftBox ml={1}>
+                <Select
+                  value={type}
+                  onChange={async (event) => {
+                    const { value } = event.target;
+                    setType(value);
+                    if (value === 0) {
+                      setPageIndex(1);
+                      getList(1);
+                    } else {
+                      setPageIndex(1);
+                      getList(1, null, value);
+                    }
+                  }}
+                >
+                  <MenuItem value={0}>all</MenuItem>
+                  <MenuItem value={1}>tv show</MenuItem>
+                  <MenuItem value={2}>movie</MenuItem>
+                </Select>
+              </SoftBox>
             </SoftBox>
           </SoftBox>
           <SoftBox p={2}>

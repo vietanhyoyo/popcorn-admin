@@ -1,8 +1,9 @@
 const { default: BaseService } = require("../base.service");
 
 class FilmService extends BaseService {
-  getList = async (page, name) => {
-    const result = await this.api.get(`/films?page=${page}&name=${name ?? ""}`);
+  getList = async (page, name, type) => {
+    console.log(name, type);
+    const result = await this.api.get(`/films?page=${page}&name=${name ?? ""}&type=${type ?? ""}`);
     return result;
   };
 
