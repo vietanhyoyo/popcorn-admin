@@ -14,19 +14,23 @@ import CusTextField from "components/CusTextField";
 import SoftButton from "components/SoftButton";
 import FilmService from "services/examples/film.service";
 import SoundService from "services/examples/sound.service";
+import SeasonService from "services/examples/season.service";
 
 export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange }) {
-  const soundService = new SoundService();
-  const filmService = new FilmService();
-  const [open, setOpen] = React.useState(false);
-  const [selectSeason, setSelectSeason] = React.useState(-1);
-  const [season, setSeason] = React.useState({
+  const newSoundTrack = {
+    _id: null,
     id: null,
     name: null,
     slug: null,
     release_date: null,
     film_id: filmProp.id,
-  });
+  };
+  const soundService = new SoundService();
+  const filmService = new FilmService();
+  const seasonService = new SeasonService();
+  const [open, setOpen] = React.useState(false);
+  const [selectSeason, setSelectSeason] = React.useState(-1);
+  const [season, setSeason] = React.useState(newSoundTrack);
 
   React.useEffect(() => {
     setOpen(isOpen);
@@ -38,11 +42,15 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
     isOpen = false;
   };
 
-  async function addSound(body) {
+  async function saveSeason(body) {
     try {
-      //await soundService.addSound(body);
-      alert("Successful");
-      console.log("Successful");
+      if (season._id === null) {
+        await seasonService.addSeason(body);
+        alert("Add Successful");
+      } else {
+        await seasonService.updateSeason(body._id, body);
+        alert("Successful");
+      }
     } catch (error) {
       alert(error);
       console.log(error);
@@ -64,69 +72,88 @@ export default function SeasonDialog({ filmProp, seasonList, isOpen, onChange })
         <DialogTitle>Season</DialogTitle>
         <DialogContent>
           <SoftBox display="flex">
-            {seasonList.length != 0 &&
-              seasonList.map((ele, index) => {
-                return (
-                  <SoftBox key={index} width="200px">
-                    <SoftButton
-                      onClick={() => {
-                        setSeason(ele);
-                      }}
-                    >
-                      <SoftBox>
-                        <SoftTypography variant="caption">
-                          -{index}--{ele.name}
-                        </SoftTypography>
-                      </SoftBox>
-                    </SoftButton>
+            <SoftBox>
+              {seasonList.length != 0 &&
+                seasonList.map((ele, index) => {
+                  return (
+                    <SoftBox key={index} width="200px">
+                      <SoftButton
+                        onClick={() => {
+                          setSeason(ele);
+                        }}
+                      >
+                        <SoftBox>
+                          <SoftTypography variant="caption">
+                            -{index}--{ele.name}
+                          </SoftTypography>
+                        </SoftBox>
+                      </SoftButton>
+                    </SoftBox>
+                  );
+                })}
+              <SoftBox width="200px">
+                <SoftButton
+                  onClick={() => {
+                    setSeason(newSoundTrack);
+                  }}
+                >
+                  <SoftBox>
+                    <SoftTypography variant="caption">Add season</SoftTypography>
                   </SoftBox>
-                );
-              })}
-          </SoftBox>
-          <SoftBox>
-            <CusTextField
-              label="name"
-              value={season.name ?? ""}
-              onChange={(event) => {
-                const { value } = event.target;
-                setSeason((prev) => ({
-                  ...prev,
-                  name: value,
-                }));
-              }}
-            />
-            <CusTextField
-              label="slug"
-              value={season.slug ?? ""}
-              onChange={(event) => {
-                const { value } = event.target;
-                setSeason((prev) => ({
-                  ...prev,
-                  slug: value,
-                }));
-              }}
-            />
-            <CusTextField
-              disabled={true}
-              label="film_id"
-              value={season.film_id ?? ""}
-              onChange={(event) => {}}
-            />
-            <SoftTypography>
-                {season.release_date}
-            </SoftTypography>
-            <CusTextField
-              label="release_date"
-              type="date"
-              value={new Date(season.release_date).toISOString().split('T')[0]}
-              onChange={(event) => {
-                const { value } = event.target;
-                setSeason((prev) => ({
-                  ...prev,
-                  release_date: value,
-                }));
-              }}
-            />
+                </SoftButton>
+              </SoftBox>
+            </SoftBox>
+            <SoftBox>
+              <CusTextField
+                label="name"
+                value={season.name ?? ""}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setSeason((prev) => ({
+                    ...prev,
+                    name: value,
+                    slug: convertToSlug(value)
+                  }));
+                }}
+              />
+              <CusTextField
+                label="slug"
+                value={season.slug ?? ""}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setSeason((prev) => ({
+                    ...prev,
+                    slug: value,
+                  }));
+                }}
+              />
+              <CusTextField
+                disabled={true}
+                label="film_id"
+                value={season.film_id ?? ""}
+                onChange={(event) => {}}
+              />
+              <SoftTypography>{season.release_date}</SoftTypography>
+              <CusTextField
+                label="release_date"
+                type="date"
+                value={new Date(season.release_date).toISOString().split("T")[0]}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setSeason((prev) => ({
+                    ...prev,
+                    release_date: value,
+                  }));
+                }}
+              />
+              <SoftButton
+                onClick={() => {
+                  saveSeason(season);
+                }}
+              >
+                Save
+              </SoftButton>
+            </SoftBox>
           </SoftBox>
         </DialogContent>
         <DialogActions>

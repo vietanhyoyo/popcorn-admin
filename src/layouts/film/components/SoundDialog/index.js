@@ -16,6 +16,7 @@ import CusInput from "components/CusInput";
 import { MenuItem, Select } from "@mui/material";
 import AddSoundDialog from "../AddSoundDialog";
 import SeasonDialog from "../SeasonDialog";
+import EpisodeDialog from "../EpisodeDialog";
 
 export default function SoundDialog({ film, isOpen, onChange }) {
   // Define service
@@ -25,6 +26,7 @@ export default function SoundDialog({ film, isOpen, onChange }) {
   const [open, setOpen] = React.useState(false);
   const [isOpenSeasonDialog, setIsOpenSeasonDialog] = React.useState(false);
   const [isOpenAddDialog, setIsOpenAddDialog] = React.useState(false);
+  const [isEpisodeDialog, setIsEpisodeDialog] = React.useState(false);
   const [sounds, setSounds] = React.useState([]);
   const [selectSound, setSelectSound] = React.useState();
   const [seasons, setSeasons] = React.useState([]);
@@ -65,19 +67,29 @@ export default function SoundDialog({ film, isOpen, onChange }) {
       setEpisodes(res.data);
       return res.data;
     } catch (error) {
+      setEpisodes([]);
+      console.log("error");
       console.log(error);
-      return error;
+      return [];
     }
   };
 
   // Sự kiện thay đổi season
   const changeSeason = async (film, selectSeason) => {
-    const episodeList = await getEpisodeList(film, selectSeason);
-    if (episodeList != []) {
-      setSelectEpisode(0);
-      // Get api soundtrack
-      const res = await filmService.getSoundTrack(film.slug, episodeList[0].slug);
-      setSounds(res.data);
+    try {
+      const episodeList = await getEpisodeList(film, selectSeason);
+      console.log(episodeList);
+      if (episodeList.length > 0) {
+        setSelectEpisode(0);
+        // Get api soundtrack
+        const res = await filmService.getSoundTrack(film.slug, episodeList[0].slug);
+        setSounds(res.data);
+      } else {
+        setSelectEpisode(-1);
+        setSounds([]);
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -118,18 +130,6 @@ export default function SoundDialog({ film, isOpen, onChange }) {
         <DialogContent>
           <SoftBox display="flex">
             <SoftBox>
-              {film.type != 1 && selectEpisode != -1 && (
-                <SoftBox>
-                  <SoftButton
-                    style={{ marginLeft: "10px" }}
-                    onClick={() => {
-                      setIsOpenAddDialog(true);
-                    }}
-                  >
-                    Add Sound Track
-                  </SoftButton>
-                </SoftBox>
-              )}
               <SoftBox>
                 {film.type == 1 && (
                   <SoftBox>
@@ -148,7 +148,7 @@ export default function SoundDialog({ film, isOpen, onChange }) {
                     value={selectSeason}
                     onChange={(event) => {
                       setSelectSeason(event.target.value);
-                      changeSeason(film, selectSeason);
+                      changeSeason(film, seasons[event.target.value]);
                     }}
                   >
                     {seasons.map((ele, index) => {
@@ -159,6 +159,21 @@ export default function SoundDialog({ film, isOpen, onChange }) {
                       );
                     })}
                   </Select>
+                )}
+                {seasons != -1 ? (
+                  <SoftBox width="200px">
+                    <SoftButton
+                      fullWidth={true}
+                      style={{ marginLeft: "10px" }}
+                      onClick={() => {
+                        setIsEpisodeDialog(true);
+                      }}
+                    >
+                      Add Episode
+                    </SoftButton>
+                  </SoftBox>
+                ) : (
+                  <></>
                 )}
                 {episodes.length != 0 && (
                   <Select
@@ -207,6 +222,21 @@ export default function SoundDialog({ film, isOpen, onChange }) {
                     </SoftBox>
                   );
                 })}
+              {film.type === 2 || selectEpisode != -1 ? (
+                <SoftBox width="200px">
+                  <SoftButton
+                    fullWidth={true}
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => {
+                      setIsOpenAddDialog(true);
+                    }}
+                  >
+                    Add Sound Track
+                  </SoftButton>
+                </SoftBox>
+              ) : (
+                <></>
+              )}
             </SoftBox>
             <SoftBox ml={1}>
               {selectSound != undefined && (
@@ -363,6 +393,15 @@ export default function SoundDialog({ film, isOpen, onChange }) {
           isOpen={isOpenSeasonDialog}
           onChange={(value) => {
             setIsOpenSeasonDialog(value);
+          }}
+        />
+      )}
+      {film != undefined && (
+        <EpisodeDialog
+          filmProp={film}
+          isOpen={isEpisodeDialog}
+          onChange={(value) => {
+            setIsEpisodeDialog(value);
           }}
         />
       )}
