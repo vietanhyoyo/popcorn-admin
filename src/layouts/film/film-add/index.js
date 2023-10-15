@@ -43,6 +43,7 @@ function FilmEdit() {
     thumbnail: null,
     backdrop: null,
     type: 1,
+    release_date: null,
     is_banner: 0,
     is_recent: 0,
     is_new: 0,
@@ -168,7 +169,6 @@ function FilmEdit() {
               </SoftBox>
               <SoftBox>
                 <CusSwitch
-                  color="success"
                   label="Popular"
                   value={film.is_popular || 1}
                   checked={film.is_popular || 0}
@@ -181,7 +181,6 @@ function FilmEdit() {
                   }}
                 />
                 <CusSwitch
-                  color="success"
                   label="New"
                   value={film.is_new || 1}
                   checked={film.is_new || 0}
@@ -195,6 +194,18 @@ function FilmEdit() {
                 />
               </SoftBox>
             </SoftBox>
+            <CusTextField
+              label="Release Date"
+              type="date"
+              value={new Date(film.release_date).toISOString().split("T")[0]}
+              onChange={(event) => {
+                const { value } = event.target;
+                setFilm((prev) => ({
+                  ...prev,
+                  release_date: value,
+                }));
+              }}
+            />
             <SoftBox>
               <CusTextField
                 label="thumbnail"
