@@ -25,7 +25,7 @@ export default function EpisodeDialog({ filmProp, reLoad, season, isOpen, onChan
     slug: null,
     description: null,
     release_date: null,
-    season_id: season.id,
+    season_id: null,
     code: null,
   };
   const episodeService = new EpisodeService();
@@ -39,14 +39,14 @@ export default function EpisodeDialog({ filmProp, reLoad, season, isOpen, onChan
 
   React.useEffect(() => {
     setOpen(isOpen);
-  
+
     if (season != null) {
       setEpisode((prev) => ({
         ...prev,
         season_id: season.id,
       }));
     }
-    getEpisodeList(filmProp, season);
+    if ((filmProp != undefined && season != undefined)) getEpisodeList(filmProp, season);
   }, [isOpen]);
 
   const handleClose = () => {
@@ -240,8 +240,8 @@ export default function EpisodeDialog({ filmProp, reLoad, season, isOpen, onChan
 }
 
 EpisodeDialog.propTypes = {
-  filmProp: PropTypes.object.isRequired,
-  season: PropTypes.object.isRequired,
+  filmProp: PropTypes.object,
+  season: PropTypes.object,
   isOpen: PropTypes.bool.isRequired,
   reLoad: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,

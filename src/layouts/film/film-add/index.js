@@ -30,6 +30,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import FilmService from "services/examples/film.service";
 import TheMovieDBServer from "services/examples/themoviedb.service";
 import CusTextField from "components/CusTextField";
+import CusSwitch from "components/CusSwitch";
 
 function FilmEdit() {
   const filmService = new FilmService();
@@ -138,6 +139,62 @@ function FilmEdit() {
                 }));
               }}
             />
+            <SoftBox display="flex">
+              <SoftBox>
+                <CusSwitch
+                  label="Banner"
+                  value={film.is_banner || 1}
+                  checked={film.is_banner || 0}
+                  onChange={(event) => {
+                    console.log(film.is_banner);
+                    setFilm((prev) => ({
+                      ...prev,
+                      is_banner: film.is_banner === 1 ? 0 : 1,
+                    }));
+                  }}
+                />
+                <CusSwitch
+                  label="Recent"
+                  value={film.is_recent || 1}
+                  checked={film.is_recent || 0}
+                  onChange={(event) => {
+                    console.log(film.is_recent);
+                    setFilm((prev) => ({
+                      ...prev,
+                      is_recent: film.is_recent === 1 ? 0 : 1,
+                    }));
+                  }}
+                />
+              </SoftBox>
+              <SoftBox>
+                <CusSwitch
+                  color="success"
+                  label="Popular"
+                  value={film.is_popular || 1}
+                  checked={film.is_popular || 0}
+                  onChange={(event) => {
+                    console.log(film.is_popular);
+                    setFilm((prev) => ({
+                      ...prev,
+                      is_popular: film.is_popular === 1 ? 0 : 1,
+                    }));
+                  }}
+                />
+                <CusSwitch
+                  color="success"
+                  label="New"
+                  value={film.is_new || 1}
+                  checked={film.is_new || 0}
+                  onChange={(event) => {
+                    console.log(film.is_new);
+                    setFilm((prev) => ({
+                      ...prev,
+                      is_new: film.is_new === 1 ? 0 : 1,
+                    }));
+                  }}
+                />
+              </SoftBox>
+            </SoftBox>
             <SoftBox>
               <CusTextField
                 label="thumbnail"

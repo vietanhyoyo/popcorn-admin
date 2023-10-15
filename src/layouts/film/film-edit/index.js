@@ -2,12 +2,13 @@
 import React from "react";
 
 // react-router components
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
+import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import { Divider, InputLabel, MenuItem, Select } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
@@ -29,6 +30,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 // Service API
 import FilmService from "services/examples/film.service";
 import TheMovieDBServer from "services/examples/themoviedb.service";
+import CusSwitch from "components/CusSwitch";
 
 function FilmEdit() {
   const filmService = new FilmService();
@@ -37,6 +39,7 @@ function FilmEdit() {
   const [themoviedb, setThemoviedb] = React.useState();
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     getAPI(route[route.length - 1]);
@@ -74,6 +77,20 @@ function FilmEdit() {
     } catch (error) {
       alert(error);
       console.log(error);
+    }
+  };
+
+  const deleteFilm = async (body) => {
+    if (body._id === null) return;
+    const result = confirm("Delelte Film");
+    if (result) {
+      try {
+        await filmService.deleteFilm(body._id);
+        alert("Delete Successful");
+        navigate("/film");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -194,6 +211,62 @@ function FilmEdit() {
                     }));
                   }}
                 />
+                <SoftBox display="flex">
+                  <SoftBox>
+                    <CusSwitch
+                      label="Banner"
+                      value={filmData.is_banner || 1}
+                      checked={filmData.is_banner || 0}
+                      onChange={(event) => {
+                        console.log(filmData.is_banner);
+                        setFilmData((prev) => ({
+                          ...prev,
+                          is_banner: filmData.is_banner === 1 ? 0 : 1,
+                        }));
+                      }}
+                    />
+                    <CusSwitch
+                      label="Recent"
+                      value={filmData.is_recent || 1}
+                      checked={filmData.is_recent || 0}
+                      onChange={(event) => {
+                        console.log(filmData.is_recent);
+                        setFilmData((prev) => ({
+                          ...prev,
+                          is_recent: filmData.is_recent === 1 ? 0 : 1,
+                        }));
+                      }}
+                    />
+                  </SoftBox>
+                  <SoftBox>
+                    <CusSwitch
+                      color="success"
+                      label="Popular"
+                      value={filmData.is_popular || 1}
+                      checked={filmData.is_popular || 0}
+                      onChange={(event) => {
+                        console.log(filmData.is_popular);
+                        setFilmData((prev) => ({
+                          ...prev,
+                          is_popular: filmData.is_popular === 1 ? 0 : 1,
+                        }));
+                      }}
+                    />
+                    <CusSwitch
+                      color="success"
+                      label="New"
+                      value={filmData.is_new || 1}
+                      checked={filmData.is_new || 0}
+                      onChange={(event) => {
+                        console.log(filmData.is_new);
+                        setFilmData((prev) => ({
+                          ...prev,
+                          is_new: filmData.is_new === 1 ? 0 : 1,
+                        }));
+                      }}
+                    />
+                  </SoftBox>
+                </SoftBox>
                 <CusInput
                   multiline
                   label="Themoviedb_id"
@@ -232,6 +305,16 @@ function FilmEdit() {
                   }}
                 >
                   Save
+                </SoftButton>
+                <SoftButton
+                  style={{ marginLeft: "10px" }}
+                  variant="outlined"
+                  color="error"
+                  onClick={async () => {
+                    await deleteFilm(filmData);
+                  }}
+                >
+                  Delete
                 </SoftButton>
               </SoftBox>
             ) : (
