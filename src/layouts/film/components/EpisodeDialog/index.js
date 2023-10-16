@@ -201,7 +201,7 @@ export default function EpisodeDialog({ filmProp, reLoad, season, isOpen, onChan
               <CusTextField
                 label="release_date"
                 type="date"
-                value={new Date(episode.release_date).toISOString().split("T")[0]}
+                value={episode.release_date != null && new Date(episode.release_date).toISOString().split("T")[0]}
                 onChange={(event) => {
                   const { value } = event.target;
                   setEpisode((prev) => ({

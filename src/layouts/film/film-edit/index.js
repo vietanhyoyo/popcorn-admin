@@ -270,7 +270,7 @@ function FilmEdit() {
                 <CusInput
                   label="Release Date"
                   type="date"
-                  value={new Date(filmData.release_date).toISOString().split("T")[0]}
+                  value={filmData.release_date != null && new Date(filmData.release_date).toISOString().split("T")[0]}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFilmData((prev) => ({

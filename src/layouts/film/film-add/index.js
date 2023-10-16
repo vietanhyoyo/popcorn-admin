@@ -197,7 +197,7 @@ function FilmEdit() {
             <CusTextField
               label="Release Date"
               type="date"
-              value={new Date(film.release_date).toISOString().split("T")[0]}
+              value={film.release_date != null && new Date(film.release_date).toISOString().split("T")[0]}
               onChange={(event) => {
                 const { value } = event.target;
                 setFilm((prev) => ({

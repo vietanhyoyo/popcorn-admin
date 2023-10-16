@@ -153,7 +153,7 @@ export default function SeasonDialog({ filmProp, reLoad, seasonList, isOpen, onC
               <CusTextField
                 label="release_date"
                 type="date"
-                value={new Date(season.release_date).toISOString().split("T")[0]}
+                value={season.release_date != null && new Date(season.release_date).toISOString().split("T")[0]}
                 onChange={(event) => {
                   const { value } = event.target;
                   setSeason((prev) => ({
