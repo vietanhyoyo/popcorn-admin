@@ -15,3 +15,17 @@ After installing the dependencies, you can start the Node.js application:
 ```bash
 npm start
 ```
+
+## Deploy server
+
+Step1: Build the server
+
+```bash
+npm run build
+```
+
+Step2: Start serve
+
+```bash
+npm run build-serve
+```
