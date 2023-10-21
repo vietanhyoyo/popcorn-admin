@@ -82,7 +82,7 @@ function FilmEdit() {
 
   const deleteFilm = async (body) => {
     if (body._id === null) return;
-    const result = confirm("Delelte Film");
+    const result = window.confirm("Delelte Film");
     if (result) {
       try {
         await filmService.deleteFilm(body._id);
@@ -161,6 +161,17 @@ function FilmEdit() {
                     </SoftTypography>
                   </SoftBox>
                 </SoftBox>
+                <CusInput
+                    label="Genres"
+                    value={filmData.genres}
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      setFilmData((prev) => ({
+                        ...prev,
+                        genres: value,
+                      }));
+                    }}
+                  />
                 <SoftBox maxWidth="100%" display="flex" flexDirection="column">
                   <CusInput
                     multiline

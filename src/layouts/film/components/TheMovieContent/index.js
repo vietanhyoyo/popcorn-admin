@@ -19,7 +19,7 @@ function TheMovieContent({ themoviedb }) {
         <FilmContent title="original_title" content={themoviedb.original_title} />
         <FilmContent title="tagline" content={themoviedb.tagline} />
         <FilmContent title="overview" content={themoviedb.overview} />
-        <FilmContent title="release_date Date" content={themoviedb.release_date} />
+        <FilmContent title="release_date" content={themoviedb.release_date} />
         <FilmContent title="budget" content={themoviedb.budget} />
         <FilmContent title="homepage" content={themoviedb.homepage} />
         <FilmContent title="popularity" content={themoviedb.popularity} />

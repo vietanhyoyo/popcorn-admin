@@ -60,7 +60,7 @@ export default function SeasonDialog({ filmProp, reLoad, seasonList, isOpen, onC
 
   const deleteSeason = async (body) => {
     if (body._id === null) return;
-    const result = confirm("Delelte Season");
+    const result = window.confirm("Delelte Season");
     if (result) {
       try {
         await seasonService.deleteSeason(body._id);

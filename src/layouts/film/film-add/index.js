@@ -43,6 +43,7 @@ function FilmEdit() {
     thumbnail: null,
     backdrop: null,
     type: 1,
+    genres: null,
     release_date: null,
     is_banner: 0,
     is_recent: 0,
@@ -70,6 +71,28 @@ function FilmEdit() {
       alert(error);
       console.log(error);
     }
+  }
+
+  function handleCrawlData() {
+    if (themoviedb === undefined) return;
+    let genresArray;
+    let genresString
+    if (themoviedb.genres) {
+      // Sử dụng phương thức map để trích xuất tất cả các giá trị name từ mảng data
+      genresArray = themoviedb.genres.map((item) => item.name);
+      // Sử dụng phương thức join để chuyển mảng names thành chuỗi, ngăn cách bởi dấu phẩy và khoảng trắng
+      genresString = genresArray.join(", ");
+      console.log(genresString);
+    }
+
+    setFilm({
+      ...film,
+      release_date: themoviedb.release_date,
+      genres: genresString,
+      thumbnail: "https://image.tmdb.org/t/p/original" + themoviedb.poster_path,
+      backdrop: "https://image.tmdb.org/t/p/original" + themoviedb.backdrop_path,
+      description: themoviedb.overview
+    });
   }
 
   return (
@@ -125,6 +148,17 @@ function FilmEdit() {
                 setFilm((prev) => ({
                   ...prev,
                   slug: value,
+                }));
+              }}
+            />
+            <CusTextField
+              label="genres"
+              value={film.genres}
+              onChange={(event) => {
+                const { value } = event.target;
+                setFilm((prev) => ({
+                  ...prev,
+                  genres: value,
                 }));
               }}
             />
@@ -197,7 +231,9 @@ function FilmEdit() {
             <CusTextField
               label="Release Date"
               type="date"
-              value={film.release_date != null && new Date(film.release_date).toISOString().split("T")[0]}
+              value={
+                film.release_date != null && new Date(film.release_date).toISOString().split("T")[0]
+              }
               onChange={(event) => {
                 const { value } = event.target;
                 setFilm((prev) => ({
@@ -257,30 +293,37 @@ function FilmEdit() {
                 }));
               }}
             />
-            <CusTextField
-              label="themoviedb_id"
-              value={film.themoviedb_id}
-              onChange={async (event) => {
-                const { value } = event.target;
-                setFilm((prev) => ({
-                  ...prev,
-                  themoviedb_id: value,
-                }));
-                try {
-                  const resApi = await theMovieDBServer.getThemovieDB(
-                    value,
-                    film.type === 2 ? "movie" : "tv"
-                  );
-                  if (resApi.status == 200) {
-                    setThemoviedb(resApi.data);
-                  } else {
-                    setThemoviedb(undefined);
+            <SoftBox display="flex">
+              <CusTextField
+                label="themoviedb_id"
+                value={film.themoviedb_id}
+                onChange={async (event) => {
+                  const { value } = event.target;
+                  setFilm((prev) => ({
+                    ...prev,
+                    themoviedb_id: value,
+                  }));
+                  try {
+                    const resApi = await theMovieDBServer.getThemovieDB(
+                      value,
+                      film.type === 2 ? "movie" : "tv"
+                    );
+                    if (resApi.status == 200) {
+                      setThemoviedb(resApi.data);
+                    } else {
+                      setThemoviedb(undefined);
+                    }
+                  } catch (error) {
+                    console.log(error);
                   }
-                } catch (error) {
-                  console.log(error);
-                }
-              }}
-            />
+                }}
+              />
+              {themoviedb != undefined ? (
+                <SoftButton onClick={handleCrawlData}>Crawl themoviedb</SoftButton>
+              ) : (
+                <SoftBox></SoftBox>
+              )}
+            </SoftBox>
             <SoftBox width="100%" style={{ display: "flex", justifyContent: "flex-end" }}>
               <SoftButton
                 onClick={() => {

@@ -115,7 +115,7 @@ export default function SoundDialog({ film, reLoad, isOpen, onChange }) {
 
   const deleteSoundTrack = async (body) => {
     if (body._id === null) return;
-    const result = confirm("Delelte Sound Track");
+    const result = window.confirm("Delelte Sound Track");
     if (result) {
       try {
         await soundService.deleteSound(body._id);

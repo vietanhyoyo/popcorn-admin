@@ -89,7 +89,7 @@ export default function EpisodeDialog({ filmProp, reLoad, season, isOpen, onChan
 
   const deleteEpisode = async (body) => {
     if (body._id === null) return;
-    const result = confirm("Delelte Episode");
+    const result = window.confirm("Delelte Episode");
     if (result) {
       try {
         await episodeService.deleteEpisode(body._id);
