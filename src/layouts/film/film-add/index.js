@@ -42,6 +42,7 @@ function FilmEdit() {
     name: null,
     thumbnail: null,
     backdrop: null,
+    banner_image: null,
     type: 1,
     genres: null,
     release_date: null,
@@ -279,6 +280,26 @@ function FilmEdit() {
                   style={{ maxHeight: "200px", marginBottom: "8px" }}
                   src={film.backdrop}
                   alt={"backdrop"}
+                ></img>
+              )}
+            </SoftBox>
+            <SoftBox>
+              <CusTextField
+                label="banner_image"
+                value={film.banner_image}
+                onChange={(event) => {
+                  const { value } = event.target;
+                  setFilm((prev) => ({
+                    ...prev,
+                    banner_image: value,
+                  }));
+                }}
+              />
+              {film.banner_image != null && (
+                <img
+                  style={{ maxHeight: "200px", marginBottom: "8px" }}
+                  src={film.banner_image}
+                  alt={"banner_image"}
                 ></img>
               )}
             </SoftBox>

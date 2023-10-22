@@ -210,6 +210,25 @@ function FilmEdit() {
                     alt={"backdrop"}
                   ></img>
                 </SoftBox>
+                <SoftBox>
+                  <CusInput
+                    multiline
+                    label="Banner Image"
+                    value={filmData.banner_image}
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      setFilmData((prev) => ({
+                        ...prev,
+                        banner_image: value,
+                      }));
+                    }}
+                  />
+                  <img
+                    style={{ maxHeight: "200px" }}
+                    src={filmData.banner_image}
+                    alt={"banner_image"}
+                  ></img>
+                </SoftBox>
                 <CusInput
                   multiline
                   label="Description"
